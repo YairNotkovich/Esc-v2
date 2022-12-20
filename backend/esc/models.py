@@ -90,26 +90,34 @@ class Airline_Company(models.Model):
 
 
 class Airport(models.Model):
+    """AI is creating summary for Airport
+
+    Args:
+        models ([type]): [description]
+
+    Returns:
+        [type]: [description]
+    """
 
     icao_code = models.CharField(max_length=4)
     iata_code = models.CharField(max_length=3)
     display_name = models.CharField(max_length=50, default="")
     name = models.CharField(max_length=50)
     city = models.CharField(max_length=50)
-    country_id = models.ForeignKey(Country, on_delete=models.CASCADE, null=False)
-    country_name = models.CharField(max_length=20)
+    country = models.ForeignKey(Country, on_delete=models.CASCADE, null=False)
+    # country_name = models.CharField(max_length=20)
     lat_decimal = models.FloatField()
     lon_decimal = models.FloatField()
-
-    def save(self, *args, **kwargs):
-        self.country_name = Country.objects.get(id=self.country_id).name
-        return super().save(*args, **kwargs)
 
     class Meta:
         verbose_name = "Airport"
 
+    def save(self, *args, **kwargs):
+        self.display_name = f"{self.iata_code}|{self.country.name}|{self.city}"
+        return super().save(*args, **kwargs)
+
     def __str__(self):
-        return f"{self.iata_code}|{self.country_name}|{self.city}"
+        return f"{self.iata_code}|{self.country.name}|{self.city}"
 
 
 class FlightRoute(models.Model):

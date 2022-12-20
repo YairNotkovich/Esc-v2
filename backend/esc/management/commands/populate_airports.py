@@ -1,11 +1,11 @@
 import requests
 from django.core.management.base import BaseCommand
-from esc.models import Country
+from esc.models import Country, Airport
 import json
 
 # define customized model for use as User
 
-countriesURL = "https://restcountries.com/v3.1/all"
+jsonPath = "mockup data/osm-world-airports.json"
 
 
 class Command(BaseCommand):
@@ -17,18 +17,14 @@ class Command(BaseCommand):
     def insert_data(self):
 
         try:
-            res = requests.get(countriesURL, timeout=2.5)
-            countries = json.loads(res.text)
+            with open(jsonPath, "r", encoding="utf8") as data:
+                raw_list = json.load(data)
         except Exception as e:
             print(e)
             return None
 
-        for country in countries:
-            Country.objects.get_or_create(
-                name=country["name"]["common"],
-                code=country["cca2"],
-                flag=country["flags"]["svg"],
-            )
+        for airport in raw_list:
+            Airport.objects.get_or_create()
 
     def handle(self, *args, **options):
         self.insert_data()
