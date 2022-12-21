@@ -8,6 +8,7 @@ from django.conf import settings
 
 
 class User(AbstractUser):
+
     email = models.EmailField("user email", max_length=240, unique=True)
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = [
@@ -90,17 +91,9 @@ class Airline_Company(models.Model):
 
 
 class Airport(models.Model):
-    """AI is creating summary for Airport
 
-    Args:
-        models ([type]): [description]
-
-    Returns:
-        [type]: [description]
-    """
-
-    icao_code = models.CharField(max_length=4)
-    iata_code = models.CharField(max_length=3)
+    icao_code = models.CharField(max_length=4, null=True)
+    iata_code = models.CharField(max_length=3, null=True)
     display_name = models.CharField(max_length=50, default="")
     name = models.CharField(max_length=50)
     city = models.CharField(max_length=50)
