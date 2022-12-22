@@ -81,7 +81,7 @@ class Airline_Company(models.Model):
         Country,
         on_delete=models.CASCADE,
         verbose_name="Base Country",
-        default=Country(code="US"),
+        null=True,
     )
     user = models.ForeignKey(
         User, on_delete=models.CASCADE, null=True, verbose_name="Manager ID"

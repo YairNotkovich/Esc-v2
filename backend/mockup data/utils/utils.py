@@ -24,10 +24,16 @@ def airports_csv_to_json(path_to_csv: Str = r"mockup data/airports.csv"):
         # "keywords", # 17
     ]
 
-    raw_data = pd.read_csv(path_to_csv, header=0, usecols=[1, 2, 3, 4, 5, 8, 10, 13])
+    raw_data = pd.read_csv(
+        path_to_csv, na_filter=False, header=0, usecols=[1, 2, 3, 4, 5, 8, 10, 13]
+    )
 
     raw_df = pd.DataFrame(raw_data)
-    print(raw_df)
+
+    # replace empty field for municipality with a default string
+    raw_df.municipality.replace("", "No municipality", inplace=True)
+
+    # include only medium and large airports in json
     df = raw_df.loc[raw_df["type"].isin(["large_airport", "medium_airport"])]
 
     df.to_json(r"mockup data/airports.json", orient="records")
@@ -79,10 +85,39 @@ def flight_route_csv_to_json(path_to_csv: Str = r"mockup data/flightroutes.csv")
         usecols=[0, 2, 4],
     )
 
-    df = pd.DataFrame(raw_data)
+    # get IATA codes from airports.json and make data frame
+    airports = pd.read_json(r"mockup data/airports.json")
+    airports_df = pd.DataFrame(airports)
+    iata_df = airports_df.iata_code
+    # print(iata_df)
+    raw_df = pd.DataFrame(raw_data)
+
+    # get Airline codes from airlines.json and make data frame
+
+    airlines = pd.read_json(r"mockup data/airlines.json")
+    airlines_df = pd.DataFrame(airlines)
+    airline_Code_df = airlines_df.IATA
+    print(airline_Code_df)
+
+    raw_df = pd.DataFrame(raw_data)
+    raw_df.drop(
+        raw_df.loc[
+            ~raw_df.origin.isin(iata_df)
+            | ~raw_df.target.isin(iata_df)
+            | ~raw_df.airline.isin(airline_Code_df)
+        ].index,
+        inplace=True,
+    )
+    print(raw_df)
+    # drop routes from and to same location
+    raw_df.drop(raw_df.loc[raw_df.origin == raw_df.target].index, inplace=True)
+
+    # Finally write df to json
+    df = raw_df
     df.to_json(r"mockup data/flight_routes.json", orient="records")
+    # print(df)
 
 
-airports_csv_to_json()
+# airports_csv_to_json()
 # airlines_csv_to_json()
-# flight_route_csv_to_json()
+flight_route_csv_to_json()
