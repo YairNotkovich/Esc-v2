@@ -2,6 +2,7 @@ from email.policy import default
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.conf import settings
+from geopy import distance as D
 
 
 # custom User model to allow email sign instead of user
@@ -90,7 +91,7 @@ class Airline_Company(models.Model):
     updated = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.name, self.code
+        return f"{self.name}, {self.code}"
 
 
 class Airport(models.Model):
@@ -117,20 +118,39 @@ class Airport(models.Model):
 
 
 class FlightRoute(models.Model):
-    airline = models.ForeignKey(Airline_Company, on_delete=models.CASCADE, null=False)
+    ident = models.IntegerField(verbose_name="Flight route ID", unique=True, blank=True)
+    airline = models.ForeignKey(
+        Airline_Company, on_delete=models.CASCADE, null=False, blank=True
+    )
     origin = models.ForeignKey(
-        Airport, on_delete=models.CASCADE, null=False, related_name="Origin_Airport"
+        Airport,
+        on_delete=models.CASCADE,
+        null=False,
+        related_name="Origin_Airport",
+        blank=True,
     )
     destination = models.ForeignKey(
         Airport,
         on_delete=models.CASCADE,
         null=False,
         related_name="Destination_Airport",
+        blank=True,
     )
-    distance = models.IntegerField(default=0)
+    distance = models.IntegerField(default=0, blank=True)
 
     def __str__(self):
-        return f"{self.airline.Code} from: {self.origin}  to: {self.destination}  distance:{self.distance}"
+        return f"{self.airline.code} from: {self.origin.name}  to: {self.destination.name}  distance:{self.distance}"
+
+    def save(self, *args, **kwargs):
+        self.distance = D.geodesic(
+            (self.origin.lat_decimal, self.origin.lon_decimal),
+            (self.destination.lat_decimal, self.destination.lon_decimal),
+        ).km
+
+        self.ident = int(
+            str(self.airline.id) + str(self.origin.id) + str(self.destination.id)
+        )
+        return super().save(*args, **kwargs)
 
 
 class Flight(models.Model):
@@ -154,6 +174,9 @@ class Flight(models.Model):
     available_tickets = models.IntegerField(default=100)
     flight_range = models.IntegerField(default=0)
 
+    def __str__(self) -> str:
+        return str(self.flight_number)
+
 
 class Booking(models.Model):
     flight = models.ForeignKey(Flight, on_delete=models.CASCADE, null=False)
@@ -161,4 +184,4 @@ class Booking(models.Model):
     seats = models.IntegerField(default=1)
 
     def __str__(self):
-        return f"{self.pk}, {self.Flight}, {self.Customer}"
+        return f"{self.pk}, {self.flight}, {self.customer}"

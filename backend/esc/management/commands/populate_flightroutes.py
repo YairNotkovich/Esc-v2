@@ -1,6 +1,7 @@
 from esc.models import FlightRoute, Airport, Airline_Company
 from django.core.management.base import BaseCommand
-from django.db import connection
+from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
+
 import json
 
 # from flight_app.utils.db_utils import dataManageUtils as dm
@@ -22,16 +23,12 @@ class Command(BaseCommand):
         for route in raw_list:
             try:
                 airline = Airline_Company.objects.get(code__iexact=route["airline"])
-            except Exception as e:
-                print(e, route["airline"])
-            try:
-                origin = Airport.objects.get(iata_code__iexact=route["origin"])
-            except Exception as e:
-                print(e, route["origin"])
-            try:
-                destination = Airport.objects.get(iata_code__iexact=route["target"])
-            except Exception as e:
-                print(e, route["target"])
+
+                origin = Airport.objects.filter(iata_code__iexact=route["origin"])[0]
+                destination = Airport.objects.filter(iata_code__iexact=route["target"])[
+                    0
+                ]
+
                 origin_lat_lon = (origin.lat_decimal, origin.lon_decimal)
                 dest_lat_lon = (destination.lat_decimal, destination.lon_decimal)
                 distance = D.geodesic(origin_lat_lon, dest_lat_lon).km
@@ -40,7 +37,7 @@ class Command(BaseCommand):
                     airline=airline,
                     origin=origin,
                     destination=destination,
-                    distance=distance,
+                    # distance=distance,
                 )
 
             except Exception as e:

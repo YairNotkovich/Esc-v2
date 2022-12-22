@@ -1,6 +1,11 @@
 from django.core.management.base import BaseCommand
 from esc.models import Country, Airline_Company
 import json
+from django.db import IntegrityError
+from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
+import operator
+from django.db.models import Q
+from functools import reduce
 
 # define customized model for use as User
 
@@ -22,7 +27,7 @@ jsonPath = "mockup data/airlines.json"
 class Command(BaseCommand):
     args = "none"
     help = """
-        this script is used to populate the database with data for User_Role
+        this script is used to populate the database with data for airlines
             """
 
     def insert_data(self):
@@ -38,16 +43,32 @@ class Command(BaseCommand):
 
             try:
                 country = Country.objects.get(name__iexact=airline["Country"])
+            except ObjectDoesNotExist:
+                query = reduce(
+                    operator.or_,
+                    (Q(name__icontains=x) for x in list(airline["Country"].split(" "))),
+                )
+                # print(query)
+                try:
+                    if country := Country.objects.filter(query):
+                        country = country[0]
+                        # print(country[0])
+                    else:
+                        # print(airline["Country"])
+                        continue
+                except ObjectDoesNotExist:
 
-            except Exception as e:
-                print(e, country)
-                continue
-            else:
+                    print("after icontains", e, airline["Country"])
+                # except MultipleObjectsReturned:
+                #     country =
+            try:
                 Airline_Company.objects.get_or_create(
                     code=airline["IATA"],
                     name=airline["Name"],
                     country=country,
                 )
+            except IntegrityError:
+                pass
 
     def handle(self, *args, **options):
         self.insert_data()

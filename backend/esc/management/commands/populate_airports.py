@@ -2,6 +2,7 @@ import requests
 from django.core.management.base import BaseCommand
 from esc.models import Country, Airport
 import json
+import os
 
 # define customized model for use as User
 
@@ -27,14 +28,19 @@ class Command(BaseCommand):
             """
 
     def insert_data(self):
+        list_len = 0
+        pos = 1
+        failed = 0
 
         try:
             with open(jsonPath, "r", encoding="utf8") as data:
                 raw_list = json.load(data)
+                list_len = len(raw_list)
         except Exception as e:
             print(e)
             return None
-
+        os.system("cls||clear")
+        print(f"inserting {list_len} airports")
         for airport in raw_list:
 
             try:
@@ -47,8 +53,13 @@ class Command(BaseCommand):
                     lat_decimal=airport["latitude_deg"],
                     lon_decimal=airport["longitude_deg"],
                 )
+                os.system("cls||clear")
+                print(f"{pos}/{list_len}")
+                pos += 1
             except Exception as e:
                 print(e, airport)
+                failed += 1
+        print(f"failed:{failed}")
 
     def handle(self, *args, **options):
         self.insert_data()
