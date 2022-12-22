@@ -78,7 +78,10 @@ class Airline_Company(models.Model):
     code = models.CharField("IATA Code", max_length=2, unique=True)
     name = models.CharField("Airline Name", max_length=100, null=True)
     country = models.ForeignKey(
-        Country, on_delete=models.CASCADE, verbose_name="Base Country", default=1
+        Country,
+        on_delete=models.CASCADE,
+        verbose_name="Base Country",
+        default=Country(code="US"),
     )
     user = models.ForeignKey(
         User, on_delete=models.CASCADE, null=True, verbose_name="Manager ID"
