@@ -1,8 +1,9 @@
-from django.core.management.base import BaseCommand
-from django.contrib.auth import get_user_model
-from esc.management.commands import populate_roles
 import json
-from esc.models import UserProfile, User_Role
+
+from django.contrib.auth import get_user_model
+from django.core.management.base import BaseCommand
+from esc.management.commands import populate_roles
+from esc.models import User_Role, UserProfile
 
 # define customized model for use as User
 User = get_user_model()
@@ -48,7 +49,10 @@ class Command(BaseCommand):
                 user=User.objects.get(username=user["username"])
             )
             profile.avatar = user["picture"]
-            profile.phone_no = user["phone_number"]
+            profile.contact_info = {
+                "phone number": user["phone_number"],
+                "address": user["location"],
+            }
             id = lambda x: 3 if x % 4 == 0 else 2
             profile.role = User_Role.objects.get(id=id(i))
             profile.save()

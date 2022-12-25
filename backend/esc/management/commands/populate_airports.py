@@ -1,8 +1,10 @@
-import requests
-from django.core.management.base import BaseCommand
-from esc.models import Country, Airport
 import json
 import os
+
+import requests
+from django.core.management.base import BaseCommand
+
+from esc.models import Airport, Country
 
 # define customized model for use as User
 

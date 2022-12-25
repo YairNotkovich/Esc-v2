@@ -1,66 +1,11 @@
-from email.policy import default
-from django.db import models
-from django.contrib.auth.models import AbstractUser
+# from email.policy import default
 from django.conf import settings
+from django.contrib import admin
+from django.contrib.auth.models import AbstractUser
+from django.db import models
 from geopy import distance as D
 
-
 # custom User model to allow email sign instead of user
-
-
-class User(AbstractUser):
-
-    email = models.EmailField("user email", max_length=240, unique=True)
-    USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = [
-        # "username",
-    ]
-
-    def __str__(self):
-        return str(self.email)
-
-
-class User_Role(models.Model):
-    role_name = models.CharField(max_length=15, unique=True)
-
-    def __str__(self) -> str:
-        return self.role_name
-
-
-class UserProfile(models.Model):
-    def contact_default():
-        return {
-            "phone number": "",
-            "address": {
-                "street": "",
-                "city": "",
-                "state": "",
-                "postcode": "",
-            },
-        }
-
-    def favorites_default():
-        return {}
-
-    def booking_default():
-        return {}
-
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    role = models.ForeignKey(
-        User_Role, on_delete=models.CASCADE, default=1, null=True, verbose_name="Role"
-    )
-    avatar = models.ImageField("Avatar", upload_to="avatars", null=True)
-    contact_info = models.JSONField("Contact Info", default=contact_default)
-    favorite = models.JSONField("Favorites", default=favorites_default)
-    booking = models.JSONField("Bookings", default=booking_default)
-
-    updated = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return f"{self.user.username}'s Profile"
-
-    class Meta:
-        verbose_name = "Profile"
 
 
 class Country(models.Model):
@@ -85,7 +30,10 @@ class Airline_Company(models.Model):
         null=True,
     )
     user = models.ForeignKey(
-        User, on_delete=models.CASCADE, null=True, verbose_name="Manager ID"
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        null=True,
+        verbose_name="Manager ID",
     )
     active = models.BooleanField(default=True)
     updated = models.DateTimeField(auto_now=True)
@@ -226,8 +174,8 @@ class Flight(models.Model):
 
 
 class Booking(models.Model):
-    flight = models.ForeignKey(Flight, on_delete=models.CASCADE, null=False)
-    customer = models.ForeignKey(User, on_delete=models.CASCADE, null=False)
+    flight = models.ManyToManyField(Flight)
+    customer = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
     seats = models.IntegerField(default=1)
 
     def __str__(self):

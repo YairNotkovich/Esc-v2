@@ -1,8 +1,10 @@
-from esc.models import FlightRoute, Airport, Airline_Company
-from django.core.management.base import BaseCommand
-from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
-import os
 import json
+import os
+
+from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
+from django.core.management.base import BaseCommand
+
+from esc.models import Airline_Company, Airport, FlightRoute
 
 # from flight_app.utils.db_utils import dataManageUtils as dm
 # from geopy import distance as D

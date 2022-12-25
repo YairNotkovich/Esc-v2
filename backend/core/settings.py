@@ -10,11 +10,12 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
-from pathlib import Path
 import os
+from datetime import timedelta
+from pathlib import Path
+
 import environ
 from django.utils import timezone
-from datetime import timedelta
 
 env = environ.Env(
     # set casting, default value
@@ -40,7 +41,7 @@ ALLOWED_HOSTS = ["127.0.0.1", "10.252.0.110"]
 CORS_ALLOW_ALL_ORIGINS = True
 
 # custom User
-AUTH_USER_MODEL = "esc.User"
+AUTH_USER_MODEL = "users.User"
 
 # Application definition
 
@@ -56,6 +57,8 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt.token_blacklist",
     "corsheaders",
     # my app
+    "users.apps.UsersConfig",
+    "airlines.apps.AirlinesConfig",
     "esc.apps.EscConfig",
 ]
 

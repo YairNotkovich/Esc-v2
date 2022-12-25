@@ -1,7 +1,9 @@
+import json
+
 import requests
 from django.core.management.base import BaseCommand
+
 from esc.models import Country
-import json
 
 # define customized model for use as User
 

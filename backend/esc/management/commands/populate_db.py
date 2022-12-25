@@ -1,7 +1,9 @@
-from django.core.management.base import BaseCommand
-
 # define customized model for use as User
-import populate_airports, populate_countries, populate_human, populate_roles
+import populate_airports
+import populate_countries
+import populate_human
+import populate_roles
+from django.core.management.base import BaseCommand
 
 
 class Command(BaseCommand):

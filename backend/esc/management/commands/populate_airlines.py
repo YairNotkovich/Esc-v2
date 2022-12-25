@@ -1,11 +1,13 @@
-from django.core.management.base import BaseCommand
-from esc.models import Country, Airline_Company
 import json
-from django.db import IntegrityError
-from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 import operator
-from django.db.models import Q
 from functools import reduce
+
+from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
+from django.core.management.base import BaseCommand
+from django.db import IntegrityError
+from django.db.models import Q
+
+from esc.models import Airline_Company, Country
 
 # define customized model for use as User
 
