@@ -93,6 +93,9 @@ class Airline_Company(models.Model):
     def __str__(self):
         return f"{self.name}, {self.code}"
 
+    class Meta:
+        verbose_name = "Airline"
+
 
 class Airport(models.Model):
 
@@ -151,6 +154,50 @@ class FlightRoute(models.Model):
             str(self.airline.id) + str(self.origin.id) + str(self.destination.id)
         )
         return super().save(*args, **kwargs)
+
+
+class FlattenedFlightRoutes(models.Model):
+    code = models.CharField(
+        max_length=7, help_text="from to code", unique=True, blank=True
+    )
+    name = models.CharField(max_length=120, help_text="from to literal", blank=True)
+    origin = models.ForeignKey(
+        Airport,
+        on_delete=models.CASCADE,
+        null=False,
+        related_name="Origin",
+        blank=True,
+    )
+    destination = models.ForeignKey(
+        Airport,
+        on_delete=models.CASCADE,
+        null=False,
+        related_name="Destination",
+        blank=True,
+    )
+    distance = models.IntegerField(default=0, blank=True)
+    airlines = models.ManyToManyField(Airline_Company, blank=True)
+
+    def __str__(self):
+        return "%s (%s)" % (
+            self.name,
+            ",\n ".join(airline.name for airline in self.airlines.all()),
+        )
+
+    def save(self, *args, **kwargs):
+        self.distance = D.geodesic(
+            (self.origin.lat_decimal, self.origin.lon_decimal),
+            (self.destination.lat_decimal, self.destination.lon_decimal),
+        ).km
+
+        self.code = f"{self.origin.iata_code}-{self.destination.iata_code}"
+        self.name = (
+            f"from {self.origin.display_name} to {self.destination.display_name}"
+        )
+        return super().save(*args, **kwargs)
+
+    class Meta:
+        verbose_name = "Flight routes by airlines"
 
 
 class Flight(models.Model):

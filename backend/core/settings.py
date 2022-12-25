@@ -37,6 +37,7 @@ SECRET_KEY = env("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env("DEBUG")
 ALLOWED_HOSTS = ["127.0.0.1", "10.252.0.110"]
+CORS_ALLOW_ALL_ORIGINS = True
 
 # custom User
 AUTH_USER_MODEL = "esc.User"
