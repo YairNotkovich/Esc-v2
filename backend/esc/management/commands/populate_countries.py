@@ -3,7 +3,7 @@ import json
 import requests
 from django.core.management.base import BaseCommand
 
-from esc.models import Country
+from geo.models import Country
 
 # define customized model for use as User
 

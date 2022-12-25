@@ -5,17 +5,20 @@ from django.contrib.auth.admin import UserAdmin
 from .models import *
 
 
-# Register your models here.
-class UserProfileAdmin(admin.ModelAdmin):
-    list_display = ('display_name', 'role','contact_display','phone_display', 'avatar')
 
-    @admin.display(ordering='user')
-    def display_name(self, obj):
-        return obj.user.last_name + " " + obj.user.first_name
+class CustomerAdmin(admin.ModelAdmin):
+    list_display = ('user','bookings')
 
-admin.site.register(User, UserAdmin)
-admin.site.register(UserProfile, UserProfileAdmin)
-# admin.site.register(User_Role)
+    @admin.display()
+    def bookings(self, obj):
+        bookings = obj.booking_set.all()
+        # print(customer)
+        # return bookings.id
+        return "%s"% (" ".join(booking.flight for booking in bookings))
+
+# admin.site.register(User, UserAdmin)
+# admin.site.register(UserProfile, UserProfileAdmin)
+admin.site.register(Customer,CustomerAdmin)
 # admin.site.register(Country)
 # admin.site.register(Airline_Company)
 # admin.site.register(Airport)

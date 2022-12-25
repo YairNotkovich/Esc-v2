@@ -4,11 +4,11 @@ import os
 import requests
 from django.core.management.base import BaseCommand
 
-from esc.models import Airport, Country
+from geo.models import Airport, Country
 
 # define customized model for use as User
 
-jsonPath = "mockup data/airports.json"
+jsonPath = "static/mockup data/airports.json"
 
 # json structure
 # {

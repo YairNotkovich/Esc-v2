@@ -29,7 +29,6 @@ class User_Role(models.Model):
 
 class UserProfile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-
     role = models.ForeignKey(
         User_Role, on_delete=models.CASCADE, default=1, null=True, verbose_name="Role"
     )
@@ -87,11 +86,3 @@ class UserProfile(models.Model):
     def phone_display(self):
 
         return self.contact_info["phone number"]
-
-    @property
-    @admin.display(
-        description="Bookings",
-    )
-    def booking_display(self):
-
-        return self.user__bookings.all()

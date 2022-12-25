@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-from esc.models import User_Role
+from users.models import User_Role
 
 # define customized model for use as User
 

@@ -3,7 +3,7 @@ import json
 from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand
 from esc.management.commands import populate_roles
-from esc.models import User_Role, UserProfile
+from users.models import User_Role, UserProfile
 
 # define customized model for use as User
 User = get_user_model()

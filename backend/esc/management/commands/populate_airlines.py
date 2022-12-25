@@ -7,11 +7,11 @@ from django.core.management.base import BaseCommand
 from django.db import IntegrityError
 from django.db.models import Q
 
-from esc.models import Airline_Company, Country
+from geo.models import Airline_Company, Country
 
 # define customized model for use as User
 
-jsonPath = "mockup data/airlines.json"
+jsonPath = "static/mockup data/airlines.json"
 
 # json structure
 # {
