@@ -4,12 +4,12 @@ import os
 from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
 from django.core.management.base import BaseCommand
 
-from esc.models import Airline_Company, Airport, FlattenedFlightRoutes
+from geo.models import Airline_Company, Airport, FlattenedFlightRoutes
 
 # from flight_app.utils.db_utils import dataManageUtils as dm
 # from geopy import distance as D
 
-jsonPath = "mockup data/flight_routes.json"
+jsonPath = "static/mockup data/flight_routes.json"
 
 
 class Command(BaseCommand):

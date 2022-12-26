@@ -138,5 +138,10 @@ class FlattenedFlightRoutes(models.Model):
         )
         return super().save(*args, **kwargs)
 
+    @property
+    def get_airlines(self):
+        return self.airlines.all()
+
     class Meta:
         verbose_name = "Flight routes by airlines"
+        

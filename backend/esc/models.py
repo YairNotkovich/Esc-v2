@@ -1,7 +1,8 @@
 from django.db import models
 from geo.models import Airline_Company, FlattenedFlightRoutes
 from users.models import UserProfile
-from datetime import datetime
+import datetime
+from django.utils import timezone
 
 
 class Customer(models.Model):
@@ -21,10 +22,11 @@ class Flight(models.Model):
     )
 
     airline = models.ForeignKey(Airline_Company, on_delete=models.CASCADE, blank=True)
-    depart_sched = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+
+    depart_sched = models.DateTimeField(default=timezone.now, blank=True)
     duration = models.IntegerField(blank=True, verbose_name="minutes of flight")
     arrive_calculated = models.DateTimeField(null=True, blank=True)
-    flight_number = models.CharField(max_length=20, blank=True)
+    flight_number = models.CharField(max_length=120, blank=True, unique=True)
     available_tickets = models.IntegerField(default=380, blank=True)
     flight_range = models.IntegerField(default=0, blank=True)
     updated = models.DateTimeField(auto_now=True)
@@ -41,7 +43,9 @@ class Flight(models.Model):
             minutes=self.duration
         )
         self.flight_number = (
-            self.airline.code + self.flight_route.code + str(self.depart_sched.date)
+            self.airline.code
+            + self.flight_route.code
+            + str(self.depart_sched.strftime("%Y-%m-%d %H:%M"))
         )
         return super().save(*args, **kwargs)
 
