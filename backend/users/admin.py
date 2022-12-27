@@ -7,19 +7,59 @@ from esc.models import Customer
 
 # Register your models here.
 class UserProfileAdmin(admin.ModelAdmin):
-    list_display = ('display_name', 'role','contact_display','phone_display', 'avatar')
-    fetch_related = ('customer')
-    @admin.display(ordering='user')
+    list_display = (
+        "username",
+        "email",
+        "full_name",
+        "role",
+        "contact_display",
+        "phone_display",
+        "avatar",
+    )
+
+    search_fields = (
+        "user__username",
+        "user__first_name",
+        "user__last_name",
+        "user__email",
+        "contact_info",
+    )
+
+    @admin.display()
     def display_name(self, obj):
         return obj.user.last_name + " " + obj.user.first_name
 
-    # @admin.display()
-    # def bookings(self, obj):
-    #     customer = Customer.objects.get(user = obj)
-    #     bookings = customer.booking_set.all()
-    #     # print(customer)
-    #     # return bookings.id
-    #     return "%s"% (" ".join(booking.flight for booking in bookings))
+    @admin.display()
+    def email(self, obj):
+        return obj.user.email
+
+    @admin.display(ordering="user__username")
+    def username(self, obj):
+        return obj.user.username
+
+    @admin.display(
+        ordering="user__last_name",
+        description="Name",
+    )
+    def full_name(self, obj):
+        return obj.user.last_name + " " + obj.user.first_name
+
+    @admin.display(
+        description="Address",
+    )
+    def contact_display(self, obj):
+        address = ""
+        for key in obj.contact_info["address"].keys():
+            address = address + " " + str(obj.contact_info["address"][key])
+        return address
+
+    @admin.display(
+        description="Phone",
+    )
+    def phone_display(self, obj):
+
+        return obj.contact_info["phone number"]
+
 
 admin.site.register(User, UserAdmin)
 admin.site.register(UserProfile, UserProfileAdmin)

@@ -61,28 +61,27 @@ class UserProfile(models.Model):
     class Meta:
         verbose_name = "Profile"
 
-    @property
-    @admin.display(
-        ordering="user",
-        description="Name",
-    )
-    def full_name(self):
-        return self.user.last_name + " " + self.user.first_name
+    # @property
+    # @admin.display(
+    #     description="Name",
+    # )
+    # def full_name(self):
+    #     return self.user.last_name + " " + self.user.first_name
 
-    @property
-    @admin.display(
-        description="Address",
-    )
-    def contact_display(self):
-        address = ""
-        for key in self.contact_info["address"].keys():
-            address = address + " " + str(self.contact_info["address"][key])
-        return address
+    # @property
+    # @admin.display(
+    #     description="Address",
+    # )
+    # def contact_display(self):
+    #     address = ""
+    #     for key in self.contact_info["address"].keys():
+    #         address = address + " " + str(self.contact_info["address"][key])
+    #     return address
 
-    @property
-    @admin.display(
-        description="Phone",
-    )
-    def phone_display(self):
+    # @property
+    # @admin.display(
+    #     description="Phone",
+    # )
+    # def phone_display(self):
 
-        return self.contact_info["phone number"]
+    #     return self.contact_info["phone number"]
