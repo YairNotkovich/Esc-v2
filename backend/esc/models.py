@@ -24,7 +24,13 @@ class Flight(models.Model):
     airline = models.ForeignKey(Airline_Company, on_delete=models.CASCADE, blank=True)
 
     depart_sched = models.DateTimeField(default=timezone.now, blank=True)
-    duration = models.IntegerField(blank=True, verbose_name="minutes of flight")
+    duration = models.DecimalField(
+        max_digits=5,
+        decimal_places=2,
+        default=0,
+        blank=True,
+        verbose_name="hours",
+    )
     arrive_calculated = models.DateTimeField(null=True, blank=True)
     flight_number = models.CharField(max_length=120, blank=True, unique=True)
     available_tickets = models.IntegerField(default=380, blank=True)
@@ -38,7 +44,7 @@ class Flight(models.Model):
         # made up speed to calculate duration
         average_speed = 650
         self.flight_range = self.flight_route.distance
-        self.duration = self.flight_route.distance * 60 / average_speed
+        self.duration = self.flight_route.distance / average_speed
         self.arrive_calculated = self.depart_sched + datetime.timedelta(
             minutes=self.duration
         )

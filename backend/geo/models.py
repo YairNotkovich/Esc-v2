@@ -46,12 +46,6 @@ class Airline_Company(models.Model):
         verbose_name="Base Country",
         null=True,
     )
-    # user = models.ForeignKey(
-    #     settings.AUTH_USER_MODEL,
-    #     on_delete=models.CASCADE,
-    #     null=True,
-    #     verbose_name="Manager ID",
-    # )
     active = models.BooleanField(default=True)
     updated = models.DateTimeField(auto_now=True)
 
@@ -121,10 +115,7 @@ class FlattenedFlightRoutes(models.Model):
     airlines = models.ManyToManyField(Airline_Company, blank=True)
 
     def __str__(self):
-        return "%s (%s)" % (
-            self.name,
-            ",\n ".join(airline.name for airline in self.airlines.all()),
-        )
+        return self.code
 
     def save(self, *args, **kwargs):
         self.distance = D.geodesic(
@@ -144,4 +135,3 @@ class FlattenedFlightRoutes(models.Model):
 
     class Meta:
         verbose_name = "Flight routes by airlines"
-        

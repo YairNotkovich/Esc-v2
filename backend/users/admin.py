@@ -1,11 +1,9 @@
-from django.conf import settings
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
 from .models import *
-from esc.models import Customer
 
-# Register your models here.
+
 class UserProfileAdmin(admin.ModelAdmin):
     list_display = (
         "username",
